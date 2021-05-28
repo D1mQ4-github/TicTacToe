@@ -9,19 +9,24 @@ document.addEventListener('DOMContentLoaded', () => {
             [2, 5, 8],
             [0, 4, 8],
             [2, 4, 6]
-        ];
-    let currentPlayer = 0,
-        endGame = false,
-        playerX = [],
-        playerO = [];
+        ]; //Массив с победными комбинациями
+    let currentPlayer = 0, //Очередь хода игрока
+        endGame = false, //Индикатор конца игры
+        playerX = [], //Список ходов игрока Х
+        playerO = []; //Список ходов игрока О
 
     tiles.forEach((tile, key) => {
         tile.addEventListener('click', () => {
+            //Остановить запись шагов если игра окончена
             if (!endGame) {
+                //Запрет на перезапись плитки
                 if (!tile.classList.contains('player_x') && !tile.classList.contains('player_o')) {
+                    //Смена игроков
                     if (currentPlayer === 0) {
                         tile.classList.add('player_x');
+                        //Добавить ход игрока
                         playerX.push(key);
+                        //Сменить игрока
                         currentPlayer = 1;
                     } else {
                         tile.classList.add('player_o');
@@ -30,11 +35,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
+                //Проверить ходы игроков по комбинациям
                 winCombs.forEach(i => {
                     checkWinner(playerO, i, 'O');
                     checkWinner(playerX, i, 'X');
                 });
 
+                //Окончить игру если все клетки заполнены - Ничья
                 if ((playerO.length + playerX.length) >= 9) {
                     endGame = true;
                     showModal('.game-modal', '.modal-close');
@@ -43,7 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    //Проверка ходов игрока с комбинациями. Параметры(ходы игрока, одна комбинация, имя игрока)
     function checkWinner(playerMoves, i, playerName) {
+        //Если попалось совпадение
         if (playerMoves.includes(i[0]) && playerMoves.includes(i[1]) && playerMoves.includes(i[2])) {
             showModal('.game-modal', '.modal-close', playerName);
             endGame = true;
